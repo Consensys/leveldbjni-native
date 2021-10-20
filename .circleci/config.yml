@@ -31,6 +31,9 @@ jobs:
       - run:
           name: "Build Linux x86 Library"
           command: ./build-linux.sh
+      - run:
+          name: "Check Library Works"
+          command: ./assemble.sh
       - persist_to_workspace:
           root: ./
           paths:
@@ -54,6 +57,9 @@ jobs:
       - run:
           name: "Build Mac x86 Library"
           command: ./build-osx.sh
+      - run:
+          name: "Check Library Works"
+          command: ./assemble.sh
       - persist_to_workspace:
           root: ./
           paths:
