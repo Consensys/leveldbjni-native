@@ -1,0 +1,54 @@
+diff --git a/configure b/configure
+index 733b6cd..50583b2 100755
+--- a/configure
++++ b/configure
+@@ -14552,7 +14552,7 @@ if test "${with_jni_jdk+set}" = set; then :
+ $as_echo_n "checking if '$__JNI_JDK_HOME' is a JDK... " >&6; }
+   # OSX had to be a little different.
+   case "$host_os" in
+-       darwin*) __JNI_INCLUDE="$__JNI_JDK_HOME/Headers";;
++       darwin*) __JNI_INCLUDE="$__JNI_JDK_HOME/include";;
+              *) __JNI_INCLUDE="$__JNI_JDK_HOME/include";;
+   esac
+ 
+@@ -14568,6 +14568,7 @@ $as_echo_n "checking if '$__JNI_JDK_HOME' is a JDK... " >&6; }
+       solaris*) __JNI_INCLUDE_EXTRAS="solaris";;
+         mingw*) __JNI_INCLUDE_EXTRAS="win32";;
+        cygwin*) __JNI_INCLUDE_EXTRAS="win32";;
++       darwin*) __JNI_INCLUDE_EXTRAS="darwin";;
+              *) __JNI_INCLUDE_EXTRAS="genunix";;
+     esac
+ 
+@@ -14604,7 +14605,6 @@ main ()
+ _ACEOF
+ if ac_fn_c_try_compile "$LINENO"; then :
+ 
+-
+       JNI_JDK=$"$__JNI_JDK_HOME"
+       JNI_EXTRA_CFLAGS="$__JNI_CFLAGS"
+ 
+@@ -14621,7 +14621,6 @@ $as_echo "yes" >&6; }
+ 
+ 
+ else
+-
+       { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+ $as_echo "no" >&6; }
+       as_fn_error $? "JDK not found. Invalid --with-jni-jdk PATH" "$LINENO" 5
+@@ -14637,7 +14636,6 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
+     CPPFLAGS="$saved_CPPFLAGS"
+ 
+ else
+-
+     { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+ $as_echo "no" >&6; }
+     as_fn_error $? "JDK not found. Invalid --with-jni-jdk PATH" "$LINENO" 5
+@@ -14658,7 +14656,7 @@ $as_echo "$as_me: JAVA_HOME was set, checking to see if it's a JDK we can use...
+ $as_echo_n "checking if '$__JNI_JDK_HOME' is a JDK... " >&6; }
+   # OSX had to be a little different.
+   case "$host_os" in
+-       darwin*) __JNI_INCLUDE="$__JNI_JDK_HOME/Headers";;
++       darwin*) __JNI_INCLUDE="$__JNI_JDK_HOME/include";;
+              *) __JNI_INCLUDE="$__JNI_JDK_HOME/include";;
+   esac
+ 

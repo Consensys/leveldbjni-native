@@ -1,0 +1,144 @@
+plugins {
+    id 'maven-publish'
+    id 'org.ajoberstar.grgit' version '4.1.0'
+}
+
+rootProject.version = calculatePublishVersion()
+def specificVersion = calculateVersion()
+def isDevelopBuild = rootProject.version.contains('develop')
+
+apply plugin: 'java'
+apply plugin: 'maven-publish'
+
+group = 'tech.pegasys'
+
+sourceCompatibility = 11
+targetCompatibility = 11
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+dependencies {
+  testImplementation 'org.fusesource.leveldbjni:leveldbjni:1.8'
+  testImplementation 'org.assertj:assertj-core:3.16.1'
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+test {
+    useJUnitPlatform()
+    reports {
+        junitXml.enabled = true
+    }
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+wrapper {
+    gradleVersion = "6.5.1"
+    distributionType = Wrapper.DistributionType.ALL
+}
+
+def cloudsmithUser = project.hasProperty('cloudsmithUser') ? project.property('cloudsmithUser') : System.getenv('CLOUDSMITH_USER')
+def cloudsmithKey = project.hasProperty('cloudsmithApiKey') ? project.property('cloudsmithApiKey') : System.getenv('CLOUDSMITH_API_KEY')
+
+publishing {
+  repositories {
+    maven {
+      name = "cloudsmith"
+      url = "https://api-g.cloudsmith.io/maven/consensys/maven/"
+      credentials {
+        username = cloudsmithUser
+        password = cloudsmithKey
+      }
+    }
+  }
+  publications {
+    mavenJava(MavenPublication) {
+      groupId "tech.pegasys"
+      version project.version
+      from components.java
+      artifact sourcesJar
+
+      versionMapping {
+        usage('java-api') { fromResolutionOf('runtimeClasspath') }
+        usage('java-runtime') { fromResolutionResult() }
+      }
+      pom {
+        name = "${project.name}"
+        url = 'http://github.com/ConsenSys/leveldb-build'
+        licenses {
+          license {
+            name = 'The Apache License, Version 2.0'
+            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+          }
+        }
+        scm {
+          connection = 'scm:git:git://github.com/ConsenSys/leveldb-build.git'
+          developerConnection = 'scm:git:ssh://github.com/ConsenSys/leveldb-build.git'
+          url = 'https://github.com/ConsenSys/leveldb-build'
+        }
+      }
+    }
+  }
+}
+
+// Calculate the version that this build would be published under (if it is published)
+// If this exact commit is tagged, use the tag
+// If this is on a release-* branch, use the most recent tag appended with +develop (e.g. 0.1.1-RC1+develop)
+// Otherwise, use develop
+def calculatePublishVersion() {
+  if (!grgit) {
+    return 'UNKNOWN'
+  }
+  def specificVersion = calculateVersion()
+  def isReleaseBranch = grgit.branch.current().name.startsWith('release-')
+  if (specificVersion.contains('+')) {
+    return isReleaseBranch ? "${specificVersion.substring(0, specificVersion.indexOf('+'))}+develop" : "develop"
+  }
+  return specificVersion
+}
+
+// Calculate the version that teku --version will report (among other places)
+// If this exact commit is tagged, use the tag
+// Otherwise use git describe --tags and replace the - after the tag with a +
+def calculateVersion() {
+  if (!grgit) {
+    return 'UNKNOWN'
+  }
+  String version = grgit.describe(tags: true)
+  if (version == null) {
+    return 'UNKNOWN'
+  }
+  def versionPattern = ~/^(?<lastVersion>.*)-(?<devVersion>[0-9]+-g[a-z0-9]+)$/
+  def matcher = version =~ versionPattern
+  if (matcher.find()) {
+    return "${matcher.group("lastVersion")}+${matcher.group("devVersion")}"
+  }
+  return version
+}
+
+task printVersion() {
+  doFirst {
+    print "Specific version: ${specificVersion}  Publish version: ${project.version}"
+  }
+}

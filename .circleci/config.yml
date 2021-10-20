@@ -1,0 +1,135 @@
+---
+version: 2.1
+
+orbs:
+  win: circleci/windows@2.2.0
+
+executors:
+  linux_executor:
+    docker:
+      - image: adoptopenjdk/openjdk11:x86_64-debian-jdk-11.0.8_10
+        auth:
+          username: $DOCKER_USER_RO
+          password: $DOCKER_PASSWORD_RO
+    resource_class: medium
+    working_directory: ~/project
+  mac_os_executor:
+    macos:
+      xcode: "12.5.0"
+    resource_class: medium
+    working_directory: ~/jblst
+    environment:
+      HOMEBREW_NO_AUTO_UPDATE: true
+
+jobs:
+  x86-64-linux-build:
+    executor: linux_executor
+    environment:
+      SKIP_GRADLE: true
+    steps:
+      - checkout
+      - run:
+          name: "Build Linux x86 Library"
+          command: ./build-linux.sh
+      - persist_to_workspace:
+          root: ./
+          paths:
+          - ./build/artifacts/
+
+  mac-os-build:
+    executor: mac_os_executor
+    environment:
+      SKIP_GRADLE: true
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            echo "Installing openjdk 11 for test execution"
+            brew install openjdk@11
+            sudo ln -sfn /usr/local/opt/openjdk@11/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-11.jdk
+
+            echo "Installing build tools"
+            brew install autoconf automake libtool
+      - run:
+          name: "Build Mac x86 Library"
+          command: ./build-osx.sh
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - ./build/artifacts/
+
+  assemble:
+    executor: linux_executor
+    steps:
+      - checkout_code
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: Copy LevelDB Sources
+          command: ./assemble.sh
+
+      - run:
+          name: Build Jar
+          command: |
+            ./gradlew --no-daemon --parallel build
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./
+
+      - store_artifacts:
+          name: Store Jar
+          path: build/libs
+
+  publish:
+    executor: linux_executor
+    steps:
+      - checkout_code
+      - attach_workspace:
+          at: .
+      - run:
+          name: Publish
+          command: |
+            echo "Publishing is currently disabled"
+            #./gradlew --no-daemon --parallel publish
+
+workflows:
+  version: 2
+  default:
+    jobs:
+      - x86-64-linux-build:
+          filters:
+            tags: &filters-release-tags
+              only: /^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?/
+          context:
+            - dockerhub-quorumengineering-ro
+      - mac-os-build:
+          filters:
+            tags: &filters-release-tags
+              only: /^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?/
+          context:
+            - dockerhub-quorumengineering-ro
+      - assemble:
+          requires:
+            - x86-64-linux-build
+            - mac-os-build
+          filters:
+            tags:
+              <<: *filters-release-tags
+          context:
+            - dockerhub-quorumengineering-ro
+      - publish:
+          requires:
+            - assemble
+          filters:
+            tags:
+              <<: *filters-release-tags
+            branches:
+              only:
+                - master
+                - /^release-.*/
+          context:
+            - quorum-gradle
+            - dockerhub-quorumengineering-ro
