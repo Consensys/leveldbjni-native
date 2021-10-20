@@ -72,13 +72,8 @@ jobs:
       - attach_workspace:
           at: ~/project
       - run:
-          name: Copy LevelDB Sources
+          name: Build Jar and Test
           command: ./assemble.sh
-
-      - run:
-          name: Build Jar
-          command: |
-            ./gradlew --no-daemon --parallel build
 
       - persist_to_workspace:
           root: .
