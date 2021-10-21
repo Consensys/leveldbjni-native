@@ -1,9 +1,12 @@
 #!/bin/bash
 set -euxo pipefail
+# Note: Not designed to be called directly.  Use either build-osx-aarch64.sh or build-osx-x86.sh
 
-mkdir -p build
-cd build
+
+mkdir -p "build/${HOST}"
+cd "build/${HOST}"
 BUILD_DIR=$PWD
+ARTIFACTS_DIR="${BUILD_DIR}/../artifacts"
 
 #apt update
 #apt install -y git build-essential automake unzip wget
@@ -25,9 +28,6 @@ curl --fail -L -O https://repo1.maven.org/maven2/org/fusesource/leveldbjni/level
 unzip leveldbjni-1.8-native-src.zip
 cd leveldbjni-1.8-native-src
 chmod +x ./configure
-patch < "${BUILD_DIR}/../configure-osx.patch"
-./configure --with-leveldb="${BUILD_DIR}/leveldb" --with-jni-jdk=`/usr/libexec/java_home -v 11` --enable-static
+patch < "${BUILD_DIR}/../../configure-osx.patch"
+./configure --with-leveldb="${BUILD_DIR}/leveldb" --with-jni-jdk=`/usr/libexec/java_home -v 11` --enable-static --host=${HOST}
 make -j8
-
-mkdir -p "${BUILD_DIR}/artifacts/osx/"
-cp .libs/libleveldbjni.jnilib "${BUILD_DIR}/artifacts/osx/"
