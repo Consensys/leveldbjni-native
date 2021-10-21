@@ -56,7 +56,10 @@ jobs:
             brew install autoconf automake libtool
       - run:
           name: "Build Mac x86 Library"
-          command: ./build-osx.sh
+          command: ./build-osx-x86.sh
+      - run:
+          name: "Build Mac aarch64 Library"
+          command: ./build-osx-aarch64.sh
       - run:
           name: "Check Library Works"
           command: ./assemble.sh
