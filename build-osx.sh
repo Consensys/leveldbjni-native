@@ -19,10 +19,11 @@ git clone --recurse-submodules -b 1.1.9 https://github.com/google/snappy.git
 cd snappy
 mkdir build
 cd build
-cmake ../
+cmake ${CMAKE_OPTIONS:-} ../
 make snappy
 
 cd "${BUILD_DIR}"
+
 
 cat <<EOF
 ************************************
@@ -39,8 +40,8 @@ git apply ./leveldb.patch
 # no make install target in leveldb, so manually copy libs
 cd "${BUILD_DIR}/leveldb"
 # Build with snappy
-CXXFLAGS="-I. -I./include -I ${BUILD_DIR}/snappy -I ${BUILD_DIR}/snappy/build -L ${BUILD_DIR}/snappy/build -DSNAPPY -std=c++11" \
-  CFLAGS="-I. -I./include -I ${BUILD_DIR}/snappy -I ${BUILD_DIR}/snappy/build -DSNAPPY -std=c++11" \
+CXXFLAGS="$CXXFLAGS -I. -I./include -I ${BUILD_DIR}/snappy -I ${BUILD_DIR}/snappy/build -L ${BUILD_DIR}/snappy/build -DSNAPPY -std=c++11" \
+  CFLAGS="$CFLAGS -I. -I./include -I ${BUILD_DIR}/snappy -I ${BUILD_DIR}/snappy/build -DSNAPPY -std=c++11" \
   make
 
 cat <<EOF
