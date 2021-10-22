@@ -1,8 +1,8 @@
 #!/bin/bash
 set -euxo pipefail
 
-export CC="cc -arch x86_64"
-export CXX="c++ -arch x86_64"
+export CFLAGS="-arch x86_64"
+export CXXFLAGS="-arch x86_64"
 export HOST="x86_64-apple-darwin"
 
 source ./build-osx.sh
