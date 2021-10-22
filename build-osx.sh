@@ -8,7 +8,6 @@ cd "build/${HOST}"
 BUILD_DIR=$PWD
 ARTIFACTS_DIR="${BUILD_DIR}/../artifacts"
 
-# Currently using brew install libsnappy
 cat <<EOF
 ************************************
 ********  Building Snappy **********
