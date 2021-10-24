@@ -40,7 +40,7 @@ git apply ./leveldb.patch
 cd "${BUILD_DIR}/leveldb"
 CXXFLAGS="${CXXFLAGS:-} -I. -I./include -I ${BUILD_DIR}/snappy -I ${BUILD_DIR}/snappy/build -L ${BUILD_DIR}/snappy/build -DSNAPPY -std=c++11" \
   CFLAGS="${CFLAGS:-} -I. -I./include -I ${BUILD_DIR}/snappy -I ${BUILD_DIR}/snappy/build -DSNAPPY -std=c++11" \
-  make
+  make libleveldb.a
 
 cd "${BUILD_DIR}"
 
@@ -57,8 +57,6 @@ cd leveldbjni-1.8-native-src
 chmod +x ./configure
 ./configure --with-leveldb="${BUILD_DIR}/leveldb" --with-snappy="${BUILD_DIR}/snappy/build" --enable-static
 make -j8
-g++ -shared -o .libs/libleveldbjni.so -Wl,--whole-archive .libs/*.o ../leveldb/libleveldb.a ../snappy/build/libsnappy.a -Wl,--no-whole-archive
-
 
 mkdir -p "${ARTIFACTS_DIR}/linux64/"
 cp .libs/libleveldbjni.so "${ARTIFACTS_DIR}/linux64/"
