@@ -1,13 +1,13 @@
 #!/bin/bash
 set -euxo pipefail
 
-mkdir -p build/linux
-cd build/linux
+mkdir -p build/${HOST}
+cd build/${HOST}
 BUILD_DIR=$PWD
 ARTIFACTS_DIR="${BUILD_DIR}/../artifacts"
 
 apt update
-apt install -y git build-essential automake unzip wget cmake
+apt install -y git build-essential automake unzip wget cmake gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu g++-aarch64-linux-gnu
 
 cat <<EOF
 ************************************
@@ -19,8 +19,8 @@ git clone --recurse-submodules -b 1.1.9 https://github.com/google/snappy.git
 cd snappy
 mkdir build
 cd build
-CFLAGS="-fPIC" CXXFLAGS="-fPIC" cmake ../
-CFLAGS="-fPIC" CXXFLAGS="-fPIC" make snappy
+cmake ${CMAKE_OPTIONS:-} ../
+make snappy
 
 cd "${BUILD_DIR}"
 
@@ -38,8 +38,8 @@ git apply ./leveldb.patch
 
 # no make install target in leveldb, so manually copy libs
 cd "${BUILD_DIR}/leveldb"
-CXXFLAGS="${CXXFLAGS:-} -I. -I./include -I ${BUILD_DIR}/snappy -I ${BUILD_DIR}/snappy/build -L ${BUILD_DIR}/snappy/build -DSNAPPY -std=c++11" \
-  CFLAGS="${CFLAGS:-} -I. -I./include -I ${BUILD_DIR}/snappy -I ${BUILD_DIR}/snappy/build -DSNAPPY -std=c++11" \
+CXXFLAGS="${CXXFLAGS:-} -I. -I./include -I ${BUILD_DIR}/snappy -I ${BUILD_DIR}/snappy/build -L ${BUILD_DIR}/snappy/build -DSNAPPY -D__ARMEL__ -std=c++11" \
+  CFLAGS="${CFLAGS:-} -I. -I./include -I ${BUILD_DIR}/snappy -I ${BUILD_DIR}/snappy/build -DSNAPPY -D__ARMEL__ -std=c++11" \
   make libleveldb.a
 
 cd "${BUILD_DIR}"
@@ -55,7 +55,7 @@ wget https://repo1.maven.org/maven2/org/fusesource/leveldbjni/leveldbjni/1.8/lev
 unzip leveldbjni-1.8-native-src.zip
 cd leveldbjni-1.8-native-src
 chmod +x ./configure
-./configure --with-leveldb="${BUILD_DIR}/leveldb" --with-snappy="${BUILD_DIR}/snappy/build" --enable-static
+./configure --with-leveldb="${BUILD_DIR}/leveldb" --with-snappy="${BUILD_DIR}/snappy/build" --enable-static --host=${HOST}
 make -j8
 
 mkdir -p "${ARTIFACTS_DIR}/linux64/"

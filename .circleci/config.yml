@@ -30,7 +30,10 @@ jobs:
       - checkout
       - run:
           name: "Build Linux x86 Library"
-          command: ./build-linux.sh
+          command: ./build-linux-x86.sh
+      - run:
+          name: "Build Linux aarch64 Library"
+          command: ./build-linux-aarch64.sh
       - run:
           name: "Check Library Works"
           command: ./assemble.sh
