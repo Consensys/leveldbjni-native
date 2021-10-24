@@ -57,6 +57,3 @@ cd leveldbjni-1.8-native-src
 chmod +x ./configure
 ./configure --with-leveldb="${BUILD_DIR}/leveldb" --with-snappy="${BUILD_DIR}/snappy/build" --enable-static --host=${HOST}
 make -j8
-
-mkdir -p "${ARTIFACTS_DIR}/linux64/"
-cp .libs/libleveldbjni.so "${ARTIFACTS_DIR}/linux64/"
