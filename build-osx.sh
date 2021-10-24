@@ -41,7 +41,7 @@ cd "${BUILD_DIR}/leveldb"
 # Build with snappy
 CXXFLAGS="${CXXFLAGS:-} -I. -I./include -I ${BUILD_DIR}/snappy -I ${BUILD_DIR}/snappy/build -L ${BUILD_DIR}/snappy/build -DSNAPPY -std=c++11" \
   CFLAGS="${CFLAGS:-} -I. -I./include -I ${BUILD_DIR}/snappy -I ${BUILD_DIR}/snappy/build -DSNAPPY -std=c++11" \
-  make
+  make libleveldb.a
 
 cat <<EOF
 ************************************
