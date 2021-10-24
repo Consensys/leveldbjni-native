@@ -4,6 +4,7 @@ set -euxo pipefail
 export CROSS_COMPILE=aarch64-linux-gnu-
 export CC=aarch64-linux-gnu-gcc
 export CXX=aarch64-linux-gnu-g++
+# Tempting to add  -D__ARMEL__ to these flags but while it compiles, it SIGSEGV on use.
 export CFLAGS="-fPIC"
 export CXXFLAGS="-fPIC"
 export HOST="aarch64-linux-gnu"
