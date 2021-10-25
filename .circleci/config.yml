@@ -102,7 +102,6 @@ jobs:
             ./gradlew --no-daemon --parallel publish
 
 workflows:
-  version: 2
   default:
     jobs:
       - x86-64-linux-build:
@@ -130,12 +129,12 @@ workflows:
           requires:
             - assemble
           filters:
-            tags:
-              <<: *filters-release-tags
             branches:
               only:
                 - main
                 - /^release-.*/
+            tags:
+              <<: *filters-release-tags
           context:
             - cloudsmith-protocols
             - dockerhub-quorumengineering-ro
