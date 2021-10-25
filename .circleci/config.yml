@@ -99,8 +99,7 @@ jobs:
       - run:
           name: Publish
           command: |
-            echo "Publishing is currently disabled"
-            #./gradlew --no-daemon --parallel publish
+            ./gradlew --no-daemon --parallel publish
 
 workflows:
   version: 2
@@ -114,8 +113,8 @@ workflows:
             - dockerhub-quorumengineering-ro
       - mac-os-build:
           filters:
-            tags: &filters-release-tags
-              only: /^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?/
+            tags:
+              <<: *filters-release-tags
           context:
             - dockerhub-quorumengineering-ro
       - assemble:
@@ -135,8 +134,8 @@ workflows:
               <<: *filters-release-tags
             branches:
               only:
-                - master
+                - main
                 - /^release-.*/
           context:
-            - quorum-gradle
+            - cloudsmith-protocols
             - dockerhub-quorumengineering-ro
