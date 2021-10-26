@@ -32,7 +32,7 @@ git clone --recurse-submodules -b 1.22_leveldbjni https://github.com/albertsteck
 cd leveldb
 CXXFLAGS="${CXXFLAGS:-} -I${BUILD_DIR}/snappy/" \
   LDFLAGS="${LDFLAGS:-} -L${BUILD_DIR}/snappy/ -lstdc++" \
-  cmake -DCMAKE_BUILD_TYPE=Release .
+  cmake -DCMAKE_BUILD_TYPE=Release ${CMAKE_OPTIONS:-} .
 
 CXXFLAGS="${CXXFLAGS:-} -I${BUILD_DIR}/snappy/" \
   LDFLAGS="${LDFLAGS:-} -L${BUILD_DIR}/snappy/ -lstdc++" \
