@@ -1,5 +1,7 @@
 # LevelDB Native
 
+ [![Build Status](https://circleci.com/gh/ConsenSys/leveldbjni-native.svg?style=svg)](https://circleci.com/gh/ConsenSys/workflows/leveldbjni-native)
+
 Provides an automated build for [LevelDB JNI](https://github.com/fusesource/leveldbjni).
 
 ## Current Status
