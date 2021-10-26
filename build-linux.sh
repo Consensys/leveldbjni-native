@@ -15,12 +15,10 @@ cat <<EOF
 ************************************
 EOF
 
-git clone --recurse-submodules -b 1.1.9 https://github.com/google/snappy.git
+git clone --recurse-submodules -b 1.1.8_leveldbjni https://github.com/albertsteckermeier/snappy.git
 cd snappy
-mkdir build
-cd build
-cmake ${CMAKE_OPTIONS:-} ../
-make snappy
+cmake ${CMAKE_OPTIONS:-} .
+make #snappy
 
 cd "${BUILD_DIR}"
 
@@ -30,17 +28,10 @@ cat <<EOF
 ************************************
 EOF
 # grab leveldb source and patch it
-git clone git://github.com/chirino/leveldb.git
+git clone -b 1.22_leveldbjni https://github.com/albertsteckermeier/leveldb.git
 cd leveldb
-git checkout 4a715cd
-wget https://raw.githubusercontent.com/fusesource/leveldbjni/master/leveldb.patch
-git apply ./leveldb.patch
-
-# no make install target in leveldb, so manually copy libs
-cd "${BUILD_DIR}/leveldb"
-CXXFLAGS="${CXXFLAGS:-} -I. -I./include -I ${BUILD_DIR}/snappy -I ${BUILD_DIR}/snappy/build -L ${BUILD_DIR}/snappy/build -DSNAPPY -std=c++11" \
-  CFLAGS="${CFLAGS:-} -I. -I./include -I ${BUILD_DIR}/snappy -I ${BUILD_DIR}/snappy/build -DSNAPPY -std=c++11" \
-  make libleveldb.a
+cmake -DCMAKE_BUILD_TYPE=Release .
+cmake --build .
 
 cd "${BUILD_DIR}"
 
@@ -55,5 +46,5 @@ wget https://repo1.maven.org/maven2/org/fusesource/leveldbjni/leveldbjni/1.8/lev
 unzip leveldbjni-1.8-native-src.zip
 cd leveldbjni-1.8-native-src
 chmod +x ./configure
-./configure --with-leveldb="${BUILD_DIR}/leveldb" --with-snappy="${BUILD_DIR}/snappy/build" --enable-static --host=${HOST}
+./configure --with-leveldb="${BUILD_DIR}/leveldb" --with-snappy="${BUILD_DIR}/snappy" --enable-static --host=${HOST}
 make -j8

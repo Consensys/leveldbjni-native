@@ -33,7 +33,7 @@ jobs:
           command: ./build-linux-x86.sh
       - run:
           name: "Build Linux aarch64 Library"
-          command: echo "Not building aarch64 :(" #./build-linux-aarch64.sh
+          command: ./build-linux-aarch64.sh
       - run:
           name: "Check Library Works"
           command: ./assemble.sh
