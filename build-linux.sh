@@ -18,7 +18,7 @@ EOF
 git clone --recurse-submodules -b 1.1.8_leveldbjni https://github.com/albertsteckermeier/snappy.git
 cd snappy
 cmake ${CMAKE_OPTIONS:-} .
-make #snappy
+make snappy
 
 cd "${BUILD_DIR}"
 
@@ -28,10 +28,15 @@ cat <<EOF
 ************************************
 EOF
 # grab leveldb source and patch it
-git clone -b 1.22_leveldbjni https://github.com/albertsteckermeier/leveldb.git
+git clone --recurse-submodules -b 1.22_leveldbjni https://github.com/albertsteckermeier/leveldb.git
 cd leveldb
-cmake -DCMAKE_BUILD_TYPE=Release .
-cmake --build .
+CXXFLAGS="${CXXFLAGS:-} -I${BUILD_DIR}/snappy/" \
+  LDFLAGS="${LDFLAGS:-} -L${BUILD_DIR}/snappy/ -lstdc++" \
+  cmake -DCMAKE_BUILD_TYPE=Release . --target leveldb
+
+CXXFLAGS="${CXXFLAGS:-} -I${BUILD_DIR}/snappy/" \
+  LDFLAGS="${LDFLAGS:-} -L${BUILD_DIR}/snappy/ -lstdc++" \
+  cmake --build .
 
 cd "${BUILD_DIR}"
 

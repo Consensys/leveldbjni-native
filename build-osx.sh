@@ -28,10 +28,15 @@ cat <<EOF
 ************************************
 EOF
 # grab leveldb source and patch it
-git clone -b 1.22_leveldbjni https://github.com/albertsteckermeier/leveldb.git
+git clone --recurse-submodules -b 1.22_leveldbjni https://github.com/albertsteckermeier/leveldb.git
 cd leveldb
-cmake -DCMAKE_BUILD_TYPE=Release .
-cmake --build .
+CXXFLAGS="${CXXFLAGS:-} -I${BUILD_DIR}/snappy/" \
+  LDFLAGS="${LDFLAGS:-} -L${BUILD_DIR}/snappy/ -lc++" \
+  cmake -DCMAKE_BUILD_TYPE=Release .
+
+CXXFLAGS="${CXXFLAGS:-} -I${BUILD_DIR}/snappy/" \
+  LDFLAGS="${LDFLAGS:-} -L${BUILD_DIR}/snappy/ -lc++" \
+  cmake --build . --target leveldb
 
 cat <<EOF
 ************************************
