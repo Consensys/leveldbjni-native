@@ -32,3 +32,14 @@ The aarch64 builds use cross-compilation so can be run (but not tested) on x86 m
 Building a multiplatform jar requires running the required `./build-<platform>.sh` script for each
 platform, potentially on multiple systems, then combining the results in `build/artifacts` before
 running `./assemble.sh`.
+
+# Dependency
+
+```groovy
+repositories {
+  maven { url "https://artifacts.consensys.net/public/maven/maven/" }
+}
+dependencies {
+  dependency "tech.pegasys:leveldbjni-native:<version>"
+}
+```
