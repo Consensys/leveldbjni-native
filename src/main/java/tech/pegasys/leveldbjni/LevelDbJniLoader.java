@@ -49,9 +49,8 @@ public class LevelDbJniLoader {
         tmpFile.toFile().deleteOnExit();
         Files.copy(resource, tmpFile, StandardCopyOption.REPLACE_EXISTING);
         System.setProperty("library.leveldbjni.path", tmpDir.toAbsolutePath().toString());
-
-        NativeDB.LIBRARY.load();
       }
+      NativeDB.LIBRARY.load();
     } catch (final IOException e) {
       throw new UncheckedIOException(e);
     }
