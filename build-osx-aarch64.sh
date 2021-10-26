@@ -8,5 +8,5 @@ export CXXFLAGS="-arch arm64"
 
 source ./build-osx.sh
 
-mkdir -p "${ARTIFACTS_DIR}/osx/aarch64"
-cp .libs/libleveldbjni.jnilib "${ARTIFACTS_DIR}/osx/aarch64/"
+mkdir -p "${ARTIFACTS_DIR}/Mac/aarch64"
+cp .libs/libleveldbjni.jnilib "${ARTIFACTS_DIR}/Mac/aarch64/"
