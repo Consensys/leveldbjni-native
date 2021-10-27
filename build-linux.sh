@@ -29,7 +29,7 @@ cat <<EOF
 ************************************
 EOF
 # grab leveldb source and patch it
-git clone --recurse-submodules -b 1.23 https://github.com/google/leveldb.git
+git clone --recurse-submodules -b 1.22 https://github.com/google/leveldb.git
 cd leveldb
 git apply ${BUILD_DIR}/../../leveldb.patch
 CXXFLAGS="${CXXFLAGS:-} -I${BUILD_DIR}/snappy/" \

@@ -14,10 +14,10 @@ index c4b2425..8439a62 100644
  # Build directory.
  build/
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index f8285b8..d7de5da 100644
+index 1409c06..8709cea 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -208,6 +208,7 @@ target_sources(leveldb
+@@ -186,6 +186,7 @@ target_sources(leveldb
      "${LEVELDB_PUBLIC_INCLUDE_DIR}/table.h"
      "${LEVELDB_PUBLIC_INCLUDE_DIR}/write_batch.h"
  )
@@ -26,10 +26,10 @@ index f8285b8..d7de5da 100644
  if (WIN32)
    target_sources(leveldb
 diff --git a/db/db_impl.cc b/db/db_impl.cc
-index 1a4e459..ae7b96d 100644
+index 761ebf6..da4e160 100644
 --- a/db/db_impl.cc
 +++ b/db/db_impl.cc
-@@ -135,6 +135,9 @@ DBImpl::DBImpl(const Options& raw_options, const std::string& dbname)
+@@ -136,6 +136,9 @@ DBImpl::DBImpl(const Options& raw_options, const std::string& dbname)
        table_cache_(new TableCache(dbname_, options_, TableCacheSize(options_))),
        db_lock_(nullptr),
        shutting_down_(false),
@@ -39,8 +39,8 @@ index 1a4e459..ae7b96d 100644
        background_work_finished_signal_(&mutex_),
        mem_(nullptr),
        imm_(nullptr),
-@@ -1464,6 +1467,39 @@ void DBImpl::GetApproximateSizes(const Range* range, int n, uint64_t* sizes) {
-   v->Unref();
+@@ -1455,6 +1458,39 @@ void DBImpl::GetApproximateSizes(const Range* range, int n, uint64_t* sizes) {
+   }
  }
  
 +void DBImpl::SuspendCompactions() {
@@ -80,19 +80,19 @@ index 1a4e459..ae7b96d 100644
  // can call if they wish
  Status DB::Put(const WriteOptions& opt, const Slice& key, const Slice& value) {
 diff --git a/db/db_impl.h b/db/db_impl.h
-index c7b0172..d955c2a 100644
+index ae87d6e..6213ccd 100644
 --- a/db/db_impl.h
 +++ b/db/db_impl.h
-@@ -48,6 +48,8 @@ class DBImpl : public DB {
-   bool GetProperty(const Slice& property, std::string* value) override;
-   void GetApproximateSizes(const Range* range, int n, uint64_t* sizes) override;
-   void CompactRange(const Slice* begin, const Slice* end) override;
-+  void SuspendCompactions() override;
-+  void ResumeCompactions() override;
+@@ -47,6 +47,8 @@ class DBImpl : public DB {
+   virtual bool GetProperty(const Slice& property, std::string* value);
+   virtual void GetApproximateSizes(const Range* range, int n, uint64_t* sizes);
+   virtual void CompactRange(const Slice* begin, const Slice* end);
++  virtual void SuspendCompactions();
++  virtual void ResumeCompactions();
  
    // Extra methods (for testing) that are not in the public DB interface
  
-@@ -170,6 +172,13 @@ class DBImpl : public DB {
+@@ -169,6 +171,13 @@ class DBImpl : public DB {
    // Lock over the persistent DB state.  Non-null iff successfully acquired.
    FileLock* db_lock_;
  
@@ -107,20 +107,22 @@ index c7b0172..d955c2a 100644
    port::Mutex mutex_;
    std::atomic<bool> shutting_down_;
 diff --git a/db/db_test.cc b/db/db_test.cc
-index 908b41d..3511306 100644
+index 78296d5..a096385 100644
 --- a/db/db_test.cc
 +++ b/db/db_test.cc
-@@ -2052,6 +2052,8 @@ class ModelDB : public DB {
+@@ -2025,6 +2025,10 @@ class ModelDB : public DB {
  
    explicit ModelDB(const Options& options) : options_(options) {}
-   ~ModelDB() override = default;
-+  void SuspendCompactions() override {}
-+  void ResumeCompactions() override {}
-   Status Put(const WriteOptions& o, const Slice& k, const Slice& v) override {
+   ~ModelDB() {}
++
++  virtual void SuspendCompactions() {}
++  virtual void ResumeCompactions() {}
++
+   virtual Status Put(const WriteOptions& o, const Slice& k, const Slice& v) {
      return DB::Put(o, k, v);
    }
 diff --git a/include/leveldb/db.h b/include/leveldb/db.h
-index a13d147..61c29c0 100644
+index ea3d9e5..bd039c4 100644
 --- a/include/leveldb/db.h
 +++ b/include/leveldb/db.h
 @@ -145,6 +145,12 @@ class LEVELDB_EXPORT DB {
@@ -137,10 +139,10 @@ index a13d147..61c29c0 100644
  
  // Destroy the contents of the specified database.
 diff --git a/include/leveldb/slice.h b/include/leveldb/slice.h
-index 37cb821..341ca39 100644
+index 2df417d..1af5635 100644
 --- a/include/leveldb/slice.h
 +++ b/include/leveldb/slice.h
-@@ -85,7 +85,6 @@ class LEVELDB_EXPORT Slice {
+@@ -86,7 +86,6 @@ class LEVELDB_EXPORT Slice {
      return ((size_ >= x.size_) && (memcmp(data_, x.data_, x.size_) == 0));
    }
  

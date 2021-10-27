@@ -14,7 +14,7 @@ cmake -G "Visual Studio 16 2019" -A x64 .
 cmake --build .
 
 cd $Env:BUILD_DIR
-git clone --recurse-submodules -b 1.23 https://github.com/google/leveldb.git
+git clone --recurse-submodules -b 1.22 https://github.com/google/leveldb.git
 cd leveldb
 git apply $Env:BUILD_DIR\..\..\snappy.patch
 cmake -G "Visual Studio 16 2019" -A x64 .
