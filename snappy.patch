@@ -1,0 +1,12 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 68686f7..e360486 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -194,6 +194,7 @@ target_include_directories(snappy
+     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
+     $<INSTALL_INTERFACE:include>
+ )
++set_property(TARGET snappy PROPERTY POSITION_INDEPENDENT_CODE ON)
+ set_target_properties(snappy
+   PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${PROJECT_VERSION_MAJOR})
+ 
