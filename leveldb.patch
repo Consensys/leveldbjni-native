@@ -86,8 +86,8 @@ index c7b0172..ef97776 100644
    bool GetProperty(const Slice& property, std::string* value) override;
    void GetApproximateSizes(const Range* range, int n, uint64_t* sizes) override;
    void CompactRange(const Slice* begin, const Slice* end) override;
-+virtual void SuspendCompactions();
-+virtual void ResumeCompactions();
++  virtual void SuspendCompactions() override;
++  virtual void ResumeCompactions() override;
  
    // Extra methods (for testing) that are not in the public DB interface
  
