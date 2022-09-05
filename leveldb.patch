@@ -79,19 +79,10 @@ index 1a4e459..9ddbb98 100644
  // can call if they wish
  Status DB::Put(const WriteOptions& opt, const Slice& key, const Slice& value) {
 diff --git a/db/db_impl.h b/db/db_impl.h
-index c7b0172..ef97776 100644
+index c7b0172..1f8fb02 100644
 --- a/db/db_impl.h
 +++ b/db/db_impl.h
-@@ -48,6 +48,8 @@ class DBImpl : public DB {
-   bool GetProperty(const Slice& property, std::string* value) override;
-   void GetApproximateSizes(const Range* range, int n, uint64_t* sizes) override;
-   void CompactRange(const Slice* begin, const Slice* end) override;
-+  virtual void SuspendCompactions() override;
-+  virtual void ResumeCompactions() override;
- 
-   // Extra methods (for testing) that are not in the public DB interface
- 
-@@ -170,6 +172,13 @@ class DBImpl : public DB {
+@@ -170,6 +170,13 @@ class DBImpl : public DB {
    // Lock over the persistent DB state.  Non-null iff successfully acquired.
    FileLock* db_lock_;
  
@@ -120,7 +111,7 @@ index 908b41d..15c8707 100644
      return DB::Put(o, k, v);
    }
 diff --git a/include/leveldb/db.h b/include/leveldb/db.h
-index a13d147..61c29c0 100644
+index a13d147..b4377be 100644
 --- a/include/leveldb/db.h
 +++ b/include/leveldb/db.h
 @@ -145,6 +145,12 @@ class LEVELDB_EXPORT DB {
