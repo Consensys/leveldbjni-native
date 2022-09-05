@@ -43,7 +43,7 @@ index 1a4e459..9ddbb98 100644
    v->Unref();
  }
  
-+void DBImpl::SuspendCompactions() override {
++void DBImpl::SuspendCompactions() {
 +  MutexLock l(& suspend_mutex);
 +  env_->Schedule(&SuspendWork, this);
 +  suspend_count++;
@@ -66,7 +66,7 @@ index 1a4e459..9ddbb98 100644
 +    suspend_cv.SignalAll();
 +    Log(options_.info_log, "Compactions resumed");
 +}
-+void DBImpl::ResumeCompactions() override {
++void DBImpl::ResumeCompactions() {
 +    MutexLock l(&suspend_mutex);
 +    suspend_count--;
 +    suspend_cv.SignalAll();
