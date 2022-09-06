@@ -70,9 +70,6 @@ jobs:
           root: ./
           paths:
             - ./build/artifacts/
-      - store_artifacts:
-          path: ./build/aarch64-apple-darwin
-          destination: cmakeLogs
 
   assemble:
     executor: linux_executor
