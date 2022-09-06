@@ -71,7 +71,7 @@ jobs:
           paths:
             - ./build/artifacts/
       - store_artifacts:
-          path: ./build/**/CMakeFiles/*.log
+          path: ./build/*/leveldb/CMakeFiles/*.log
           destination: cmakeLogs
 
   assemble:
