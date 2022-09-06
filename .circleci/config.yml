@@ -70,6 +70,13 @@ jobs:
           root: ./
           paths:
             - ./build/artifacts/
+      - run:
+          command: |
+            find ./build/ -type f -name "CMake*.log" -exec tar -rvf build/cmakeLogs.tar {} \;
+          when: on_fail
+      - store_artifacts:
+          path: ./build/cmakeLogs.tar
+          destination: cmakeLogs
 
   assemble:
     executor: linux_executor
