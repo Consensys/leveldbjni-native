@@ -41,6 +41,10 @@ jobs:
           root: ./
           paths:
           - ./build/artifacts/
+      - store_artifacts:
+            name: Store Test Results
+            path: build/reports
+            destination: test_results
 
   mac-os-build:
     executor: mac_os_executor
@@ -92,7 +96,6 @@ jobs:
           root: .
           paths:
             - ./
-
       - store_artifacts:
           name: Store Jar
           path: build/libs
