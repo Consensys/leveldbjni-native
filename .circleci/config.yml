@@ -70,6 +70,9 @@ jobs:
           root: ./
           paths:
             - ./build/artifacts/
+      - store_artifacts:
+          path: ./build/**/CMakeFiles/*.log
+          destination: cmakeLogs
 
   assemble:
     executor: linux_executor
