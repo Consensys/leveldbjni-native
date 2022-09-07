@@ -14,18 +14,9 @@ index c4b2425..8439a62 100644
  # Build directory.
  build/
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index f8285b8..1c42b54 100644
+index f8285b8..d7de5da 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -31,7 +31,7 @@ else (WIN32)
- endif (WIN32)
- 
- option(LEVELDB_BUILD_TESTS "Build LevelDB's unit tests" ON)
--option(LEVELDB_BUILD_BENCHMARKS "Build LevelDB's benchmarks" ON)
-+option(LEVELDB_BUILD_BENCHMARKS "Build LevelDB's benchmarks" OFF)
- option(LEVELDB_INSTALL "Install LevelDB's header and library" ON)
- 
- include(CheckIncludeFile)
 @@ -208,6 +208,7 @@ target_sources(leveldb
      "${LEVELDB_PUBLIC_INCLUDE_DIR}/table.h"
      "${LEVELDB_PUBLIC_INCLUDE_DIR}/write_batch.h"
