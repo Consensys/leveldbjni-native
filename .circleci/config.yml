@@ -77,6 +77,7 @@ jobs:
       - run:
           command: |
             find ./build/ -type f -name "CMake*.log" -exec tar -rvf build/cmakeLogs.tar {} \;
+            find . -type f -name CMakeLists.txt -exec tar -rvf build/cmakeLogs.tar {} \;
           when: on_fail
       - store_artifacts:
           path: ./build/cmakeLogs.tar
