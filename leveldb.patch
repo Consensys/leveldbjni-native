@@ -194,7 +194,7 @@ index 908b41d..15c8707 100644
      return DB::Put(o, k, v);
    }
 diff --git a/include/leveldb/c.h b/include/leveldb/c.h
-index 02c79ba..c3e4400 100644
+index 02c79ba..bb1d8e9 100644
 --- a/include/leveldb/c.h
 +++ b/include/leveldb/c.h
 @@ -32,7 +32,7 @@
@@ -215,7 +215,24 @@ index 02c79ba..c3e4400 100644
  LEVELDB_EXPORT void leveldb_iter_seek_to_first(leveldb_iterator_t*);
  LEVELDB_EXPORT void leveldb_iter_seek_to_last(leveldb_iterator_t*);
  LEVELDB_EXPORT void leveldb_iter_seek(leveldb_iterator_t*, const char* k,
-@@ -171,11 +171,11 @@ LEVELDB_EXPORT void leveldb_options_set_comparator(leveldb_options_t*,
+@@ -147,7 +147,7 @@ LEVELDB_EXPORT void leveldb_iter_get_error(const leveldb_iterator_t*,
+ 
+ /* Write batch */
+ 
+-LEVELDB_EXPORT leveldb_writebatch_t* leveldb_writebatch_create(void);
++LEVELDB_EXPORT leveldb_writebatch_t* leveldb_writebatch_create();
+ LEVELDB_EXPORT void leveldb_writebatch_destroy(leveldb_writebatch_t*);
+ LEVELDB_EXPORT void leveldb_writebatch_clear(leveldb_writebatch_t*);
+ LEVELDB_EXPORT void leveldb_writebatch_put(leveldb_writebatch_t*,
+@@ -164,18 +164,18 @@ LEVELDB_EXPORT void leveldb_writebatch_append(
+ 
+ /* Options */
+ 
+-LEVELDB_EXPORT leveldb_options_t* leveldb_options_create(void);
++LEVELDB_EXPORT leveldb_options_t* leveldb_options_create();
+ LEVELDB_EXPORT void leveldb_options_destroy(leveldb_options_t*);
+ LEVELDB_EXPORT void leveldb_options_set_comparator(leveldb_options_t*,
+                                                    leveldb_comparator_t*);
  LEVELDB_EXPORT void leveldb_options_set_filter_policy(leveldb_options_t*,
                                                        leveldb_filterpolicy_t*);
  LEVELDB_EXPORT void leveldb_options_set_create_if_missing(leveldb_options_t*,
@@ -239,8 +256,12 @@ index 02c79ba..c3e4400 100644
                               const char* filter, size_t filter_length),
      const char* (*name)(void*));
  LEVELDB_EXPORT void leveldb_filterpolicy_destroy(leveldb_filterpolicy_t*);
-@@ -222,7 +222,7 @@ LEVELDB_EXPORT leveldb_filterpolicy_t* leveldb_filterpolicy_create_bloom(
- LEVELDB_EXPORT leveldb_readoptions_t* leveldb_readoptions_create(void);
+@@ -219,10 +219,10 @@ LEVELDB_EXPORT leveldb_filterpolicy_t* leveldb_filterpolicy_create_bloom(
+ 
+ /* Read options */
+ 
+-LEVELDB_EXPORT leveldb_readoptions_t* leveldb_readoptions_create(void);
++LEVELDB_EXPORT leveldb_readoptions_t* leveldb_readoptions_create();
  LEVELDB_EXPORT void leveldb_readoptions_destroy(leveldb_readoptions_t*);
  LEVELDB_EXPORT void leveldb_readoptions_set_verify_checksums(
 -    leveldb_readoptions_t*, uint8_t);
@@ -248,6 +269,37 @@ index 02c79ba..c3e4400 100644
  LEVELDB_EXPORT void leveldb_readoptions_set_fill_cache(leveldb_readoptions_t*,
                                                         uint8_t);
  LEVELDB_EXPORT void leveldb_readoptions_set_snapshot(leveldb_readoptions_t*,
+@@ -230,7 +230,7 @@ LEVELDB_EXPORT void leveldb_readoptions_set_snapshot(leveldb_readoptions_t*,
+ 
+ /* Write options */
+ 
+-LEVELDB_EXPORT leveldb_writeoptions_t* leveldb_writeoptions_create(void);
++LEVELDB_EXPORT leveldb_writeoptions_t* leveldb_writeoptions_create();
+ LEVELDB_EXPORT void leveldb_writeoptions_destroy(leveldb_writeoptions_t*);
+ LEVELDB_EXPORT void leveldb_writeoptions_set_sync(leveldb_writeoptions_t*,
+                                                   uint8_t);
+@@ -242,7 +242,7 @@ LEVELDB_EXPORT void leveldb_cache_destroy(leveldb_cache_t* cache);
+ 
+ /* Env */
+ 
+-LEVELDB_EXPORT leveldb_env_t* leveldb_create_default_env(void);
++LEVELDB_EXPORT leveldb_env_t* leveldb_create_default_env();
+ LEVELDB_EXPORT void leveldb_env_destroy(leveldb_env_t*);
+ 
+ /* If not NULL, the returned buffer must be released using leveldb_free(). */
+@@ -258,10 +258,10 @@ LEVELDB_EXPORT char* leveldb_env_get_test_directory(leveldb_env_t*);
+ LEVELDB_EXPORT void leveldb_free(void* ptr);
+ 
+ /* Return the major version number for this release. */
+-LEVELDB_EXPORT int leveldb_major_version(void);
++LEVELDB_EXPORT int leveldb_major_version();
+ 
+ /* Return the minor version number for this release. */
+-LEVELDB_EXPORT int leveldb_minor_version(void);
++LEVELDB_EXPORT int leveldb_minor_version();
+ 
+ #ifdef __cplusplus
+ } /* end extern "C" */
 diff --git a/include/leveldb/db.h b/include/leveldb/db.h
 index a13d147..b4377be 100644
 --- a/include/leveldb/db.h
