@@ -7,7 +7,7 @@ orbs:
 executors:
   linux_executor:
     docker:
-      - image: adoptopenjdk/openjdk11:x86_64-debian-jdk-11.0.8_10
+      - image: eclipse-temurin:17.0.8.1_1-jre-jammy
         auth:
           username: $DOCKER_USER_RO
           password: $DOCKER_PASSWORD_RO
