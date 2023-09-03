@@ -15,7 +15,7 @@ executors:
     working_directory: ~/project
   mac_os_executor:
     macos:
-      xcode: "12.5.0"
+      xcode: "13.4.1"
     resource_class: medium
     working_directory: ~/jblst
     environment:
