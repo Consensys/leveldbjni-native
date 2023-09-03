@@ -12,8 +12,8 @@ apply plugin: 'maven-publish'
 
 group = 'tech.pegasys'
 
-sourceCompatibility = 11
-targetCompatibility = 11
+sourceCompatibility = 17
+targetCompatibility = 17
 
 repositories {
     jcenter()
