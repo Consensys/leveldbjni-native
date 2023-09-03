@@ -51,9 +51,9 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            echo "Installing openjdk 11 for test execution"
-            brew install openjdk@11
-            sudo ln -sfn /usr/local/opt/openjdk@11/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-11.jdk
+            echo "Installing openjdk 17 for test execution"
+            brew install openjdk@17
+            sudo ln -sfn /usr/local/opt/openjdk@17/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-17.jdk
 
             echo "Installing build tools"
             brew install autoconf automake libtool cmake
