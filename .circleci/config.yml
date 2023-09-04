@@ -7,7 +7,7 @@ orbs:
 executors:
   linux_executor:
     docker:
-      - image: adoptopenjdk/openjdk11:x86_64-debian-jdk-11.0.8_10
+      - image: eclipse-temurin:17.0.8.1_1-jdk
         auth:
           username: $DOCKER_USER_RO
           password: $DOCKER_PASSWORD_RO
@@ -15,7 +15,7 @@ executors:
     working_directory: ~/project
   mac_os_executor:
     macos:
-      xcode: "12.5.0"
+      xcode: "13.4.1"
     resource_class: medium
     working_directory: ~/jblst
     environment:
@@ -51,9 +51,9 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            echo "Installing openjdk 11 for test execution"
-            brew install openjdk@11
-            sudo ln -sfn /usr/local/opt/openjdk@11/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-11.jdk
+            echo "Installing openjdk 17 for test execution"
+            brew install openjdk@17
+            sudo ln -sfn /usr/local/opt/openjdk@17/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-17.jdk
 
             echo "Installing build tools"
             brew install autoconf automake libtool cmake
