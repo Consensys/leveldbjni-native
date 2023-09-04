@@ -9,7 +9,8 @@ executors:
     docker:
       - image: eclipse-temurin:17.0.8.1_1-jdk
         auth:
-          <<: *docker-auth
+          username: $DOCKER_USER_RO
+          password: $DOCKER_PASSWORD_RO
     resource_class: medium
     working_directory: ~/project
   mac_os_executor:
