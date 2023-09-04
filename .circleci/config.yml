@@ -2,7 +2,7 @@
 version: 2.1
 
 orbs:
-  win: circleci/windows@2.2.0
+  win: circleci/windows@5.0.0
 
 executors:
   linux_executor:
@@ -109,13 +109,13 @@ workflows:
             tags: &filters-release-tags
               only: /^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?/
           context:
-            - dockerhub-quorumengineering-ro
+            - protocols-dockerhub
       - mac-os-build:
           filters:
             tags:
               <<: *filters-release-tags
           context:
-            - dockerhub-quorumengineering-ro
+            - protocols-dockerhub
       - assemble:
           requires:
             - x86-64-linux-build
@@ -124,7 +124,7 @@ workflows:
             tags:
               <<: *filters-release-tags
           context:
-            - dockerhub-quorumengineering-ro
+            - protocols-dockerhub
       - publish:
           requires:
             - assemble
@@ -136,5 +136,5 @@ workflows:
             tags:
               <<: *filters-release-tags
           context:
-            - cloudsmith-protocols
-            - dockerhub-quorumengineering-ro
+            - protocols-cloudsmith
+            - protocols-dockerhub
