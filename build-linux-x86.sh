@@ -7,7 +7,7 @@ unset CXX
 unset CMAKE_OPTIONS
 
 export CFLAGS="-fPIC"
-export CXXFLAGS="-fPIC"
+export CXXFLAGS="-fPIC -fno-rtti"
 export HOST="x86_64-linux-gnu"
 
 source ./build-linux.sh

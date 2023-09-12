@@ -2,7 +2,7 @@
 set -euxo pipefail
 
 export CFLAGS="-arch x86_64"
-export CXXFLAGS="-arch x86_64"
+export CXXFLAGS="-arch x86_64 -fno-rtti"
 export HOST="x86_64-apple-darwin"
 
 source ./build-osx.sh
