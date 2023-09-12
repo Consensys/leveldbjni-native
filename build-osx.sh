@@ -53,5 +53,5 @@ unzip leveldbjni-1.8-native-src.zip
 cd leveldbjni-1.8-native-src
 chmod +x ./configure
 patch < "${BUILD_DIR}/../../configure-osx.patch"
-CXXFLAGS="${CXXFLAGS:-} -std=c++11" ./configure --with-leveldb="${BUILD_DIR}/leveldb" --with-snappy="${BUILD_DIR}/snappy" --with-jni-jdk=`/usr/libexec/java_home -v 11` --enable-static --host=${HOST}
+CXXFLAGS="${CXXFLAGS:-} -fno-rtti -std=c++11" ./configure --with-leveldb="${BUILD_DIR}/leveldb" --with-snappy="${BUILD_DIR}/snappy" --with-jni-jdk=`/usr/libexec/java_home -v 11` --enable-static --host=${HOST}
 make -j8
