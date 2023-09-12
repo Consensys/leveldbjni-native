@@ -10,3 +10,16 @@ index 68686f7..e360486 100644
  set_target_properties(snappy
    PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${PROJECT_VERSION_MAJOR})
  
+diff --git a/snappy.cc b/snappy.cc
+index d414718..d0cbe54 100644
+--- a/snappy.cc
++++ b/snappy.cc
+@@ -1290,7 +1290,7 @@ std::pair<const uint8_t*, ptrdiff_t> DecompressBranchless(
+         DeferMemCopy(&deferred_src, &deferred_length, from, len);
+       }
+     } while (ip < ip_limit_min_slop &&
+-             (op + deferred_length) < op_limit_min_slop);
++             static_cast<ptrdiff_t>(op + deferred_length) < op_limit_min_slop);
+   exit:
+     ip--;
+     assert(ip <= ip_limit);

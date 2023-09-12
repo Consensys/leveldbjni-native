@@ -15,7 +15,7 @@ cat <<EOF
 ************************************
 EOF
 
-git clone --recurse-submodules -b 1.1.9 https://github.com/google/snappy.git
+git clone --recurse-submodules -b 1.1.10 https://github.com/google/snappy.git
 cd snappy
 git apply ${BUILD_DIR}/../../snappy.patch
 cmake ${CMAKE_OPTIONS:-} .
