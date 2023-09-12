@@ -51,6 +51,16 @@ index f8285b8..d7de5da 100644
  
  if (WIN32)
    target_sources(leveldb
+@@ -39,7 +39,8 @@ check_include_file("unistd.h" HAVE_UNISTD_H)
+ 
+ include(CheckLibraryExists)
+ check_library_exists(crc32c crc32c_value "" HAVE_CRC32C)
+-check_library_exists(snappy snappy_compress "" HAVE_SNAPPY)
++set(HAVE_SNAPPY "" 1)
++# check_library_exists(snappy snappy_compress "" HAVE_SNAPPY)
+ check_library_exists(tcmalloc malloc "" HAVE_TCMALLOC)
+ 
+ include(CheckCXXSymbolExists)
 diff --git a/db/db_impl.cc b/db/db_impl.cc
 index 1a4e459..9ddbb98 100644
 --- a/db/db_impl.cc
