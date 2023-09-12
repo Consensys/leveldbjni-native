@@ -1,3 +1,29 @@
+diff --git a/third_party/benchmark/CMakeLists.txt b/third_party/benchmark/CMakeLists.txt
+index 1007254..5d0a245 100644
+--- a/third_party/benchmark/CMakeLists.txt
++++ b/third_party/benchmark/CMakeLists.txt
+@@ -1,5 +1,7 @@
+ cmake_minimum_required (VERSION 3.5.1)
+ 
++set(HAVE_POSIX_REGEX "" 1)
++
+ foreach(p
+     CMP0048 # OK to clear PROJECT_VERSION on project()
+     CMP0054 # CMake 3.1
+Submodule third_party/googletest contains modified content
+diff --git a/third_party/googletest/CMakeLists.txt b/third_party/googletest/CMakeLists.txt
+index f11bbb52..bb7d3c7d 100644
+--- a/third_party/googletest/CMakeLists.txt
++++ b/third_party/googletest/CMakeLists.txt
+@@ -3,6 +3,8 @@
+ 
+ cmake_minimum_required(VERSION 2.8.8)
+ 
++set(HAVE_POSIX_REGEX "" 1)
++
+ if (POLICY CMP0048)
+   cmake_policy(SET CMP0048 NEW)
+ endif (POLICY CMP0048)
 diff --git a/.gitignore b/.gitignore
 index c4b2425..8439a62 100644
 --- a/.gitignore
@@ -14,10 +40,10 @@ index c4b2425..8439a62 100644
  # Build directory.
  build/
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 1409c06..8709cea 100644
+index f8285b8..d7de5da 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -186,6 +186,7 @@ target_sources(leveldb
+@@ -208,6 +208,7 @@ target_sources(leveldb
      "${LEVELDB_PUBLIC_INCLUDE_DIR}/table.h"
      "${LEVELDB_PUBLIC_INCLUDE_DIR}/write_batch.h"
  )
@@ -26,10 +52,10 @@ index 1409c06..8709cea 100644
  if (WIN32)
    target_sources(leveldb
 diff --git a/db/db_impl.cc b/db/db_impl.cc
-index 761ebf6..da4e160 100644
+index 1a4e459..9ddbb98 100644
 --- a/db/db_impl.cc
 +++ b/db/db_impl.cc
-@@ -136,6 +136,9 @@ DBImpl::DBImpl(const Options& raw_options, const std::string& dbname)
+@@ -135,6 +135,9 @@ DBImpl::DBImpl(const Options& raw_options, const std::string& dbname)
        table_cache_(new TableCache(dbname_, options_, TableCacheSize(options_))),
        db_lock_(nullptr),
        shutting_down_(false),
@@ -39,8 +65,8 @@ index 761ebf6..da4e160 100644
        background_work_finished_signal_(&mutex_),
        mem_(nullptr),
        imm_(nullptr),
-@@ -1455,6 +1458,39 @@ void DBImpl::GetApproximateSizes(const Range* range, int n, uint64_t* sizes) {
-   }
+@@ -1464,6 +1467,38 @@ void DBImpl::GetApproximateSizes(const Range* range, int n, uint64_t* sizes) {
+   v->Unref();
  }
  
 +void DBImpl::SuspendCompactions() {
@@ -75,24 +101,24 @@ index 761ebf6..da4e160 100644
 +    }
 +}
 +
-+
  // Default implementations of convenience methods that subclasses of DB
  // can call if they wish
  Status DB::Put(const WriteOptions& opt, const Slice& key, const Slice& value) {
 diff --git a/db/db_impl.h b/db/db_impl.h
-index ae87d6e..6213ccd 100644
+index c7b0172..5093bad 100644
 --- a/db/db_impl.h
 +++ b/db/db_impl.h
-@@ -47,6 +47,8 @@ class DBImpl : public DB {
-   virtual bool GetProperty(const Slice& property, std::string* value);
-   virtual void GetApproximateSizes(const Range* range, int n, uint64_t* sizes);
-   virtual void CompactRange(const Slice* begin, const Slice* end);
-+  virtual void SuspendCompactions();
-+  virtual void ResumeCompactions();
+@@ -49,6 +49,9 @@ class DBImpl : public DB {
+   void GetApproximateSizes(const Range* range, int n, uint64_t* sizes) override;
+   void CompactRange(const Slice* begin, const Slice* end) override;
  
++  virtual void SuspendCompactions() override;
++  virtual void ResumeCompactions() override;
++
    // Extra methods (for testing) that are not in the public DB interface
  
-@@ -169,6 +171,13 @@ class DBImpl : public DB {
+   // Compact any files in the named level that overlap [*begin,*end]
+@@ -170,6 +173,13 @@ class DBImpl : public DB {
    // Lock over the persistent DB state.  Non-null iff successfully acquired.
    FileLock* db_lock_;
  
@@ -107,22 +133,21 @@ index ae87d6e..6213ccd 100644
    port::Mutex mutex_;
    std::atomic<bool> shutting_down_;
 diff --git a/db/db_test.cc b/db/db_test.cc
-index 78296d5..a096385 100644
+index 908b41d..15c8707 100644
 --- a/db/db_test.cc
 +++ b/db/db_test.cc
-@@ -2025,6 +2025,10 @@ class ModelDB : public DB {
+@@ -2052,6 +2052,9 @@ class ModelDB : public DB {
  
    explicit ModelDB(const Options& options) : options_(options) {}
-   ~ModelDB() {}
+   ~ModelDB() override = default;
 +
 +  virtual void SuspendCompactions() {}
 +  virtual void ResumeCompactions() {}
-+
-   virtual Status Put(const WriteOptions& o, const Slice& k, const Slice& v) {
+   Status Put(const WriteOptions& o, const Slice& k, const Slice& v) override {
      return DB::Put(o, k, v);
    }
 diff --git a/include/leveldb/db.h b/include/leveldb/db.h
-index ea3d9e5..bd039c4 100644
+index a13d147..b4377be 100644
 --- a/include/leveldb/db.h
 +++ b/include/leveldb/db.h
 @@ -145,6 +145,12 @@ class LEVELDB_EXPORT DB {
@@ -133,16 +158,16 @@ index ea3d9e5..bd039c4 100644
 +  // Suspends the background compaction thread.  This methods
 +  // returns once suspended.
 +  virtual void SuspendCompactions() = 0;
-+  // Resumes a suspended background compation thread.
++  // Resumes a suspended background compaction thread.
 +  virtual void ResumeCompactions() = 0;
  };
  
  // Destroy the contents of the specified database.
 diff --git a/include/leveldb/slice.h b/include/leveldb/slice.h
-index 2df417d..1af5635 100644
+index 37cb821..341ca39 100644
 --- a/include/leveldb/slice.h
 +++ b/include/leveldb/slice.h
-@@ -86,7 +86,6 @@ class LEVELDB_EXPORT Slice {
+@@ -85,7 +85,6 @@ class LEVELDB_EXPORT Slice {
      return ((size_ >= x.size_) && (memcmp(data_, x.data_, x.size_) == 0));
    }
  
