@@ -1,3 +1,29 @@
+diff --git a/third_party/benchmark/CMakeLists.txt b/third_party/benchmark/CMakeLists.txt
+index 1007254..5d0a245 100644
+--- a/third_party/benchmark/CMakeLists.txt
++++ b/third_party/benchmark/CMakeLists.txt
+@@ -1,5 +1,7 @@
+ cmake_minimum_required (VERSION 3.5.1)
+ 
++set(HAVE_POSIX_REGEX "" 1)
++
+ foreach(p
+     CMP0048 # OK to clear PROJECT_VERSION on project()
+     CMP0054 # CMake 3.1
+Submodule third_party/googletest contains modified content
+diff --git a/third_party/googletest/CMakeLists.txt b/third_party/googletest/CMakeLists.txt
+index f11bbb52..bb7d3c7d 100644
+--- a/third_party/googletest/CMakeLists.txt
++++ b/third_party/googletest/CMakeLists.txt
+@@ -3,6 +3,8 @@
+ 
+ cmake_minimum_required(VERSION 2.8.8)
+ 
++set(HAVE_POSIX_REGEX "" 1)
++
+ if (POLICY CMP0048)
+   cmake_policy(SET CMP0048 NEW)
+ endif (POLICY CMP0048)
 diff --git a/.gitignore b/.gitignore
 index c4b2425..8439a62 100644
 --- a/.gitignore
