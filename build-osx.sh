@@ -16,7 +16,6 @@ EOF
 
 git clone --recurse-submodules -b 1.1.10 https://github.com/google/snappy.git
 cd snappy
-git cherry-pick 27f34a580be4a3becf5f8c0cba13433f53c21337
 git apply ${BUILD_DIR}/../../snappy.patch
 cmake ${CMAKE_OPTIONS:-} .
 make snappy
