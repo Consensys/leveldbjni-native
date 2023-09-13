@@ -34,7 +34,7 @@ cd leveldb
 git apply ${BUILD_DIR}/../../leveldb.patch
 CXXFLAGS="${CXXFLAGS:-} -I${BUILD_DIR}/snappy/" \
   LDFLAGS="${LDFLAGS:-} -L${BUILD_DIR}/snappy/ -lc++" \
-  cmake -DCMAKE_BUILD_TYPE=Release .
+  cmake -DHAVE_SNAPPY=1 -DCMAKE_BUILD_TYPE=Release .
 
 CXXFLAGS="${CXXFLAGS:-} -I${BUILD_DIR}/snappy/" \
   LDFLAGS="${LDFLAGS:-} -L${BUILD_DIR}/snappy/ -lc++" \

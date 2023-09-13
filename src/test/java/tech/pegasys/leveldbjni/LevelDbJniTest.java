@@ -14,6 +14,7 @@ package tech.pegasys.leveldbjni;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.io.File;
 import java.nio.file.Path;
 import org.fusesource.leveldbjni.JniDBFactory;
 import org.iq80.leveldb.DB;
@@ -44,5 +45,21 @@ public class LevelDbJniTest {
     final byte[] value = {4, 5, 6};
     db.put(key, value);
     assertThat(db.get(key)).isEqualTo(value);
+  }
+
+  @Test
+  void shouldOpenTekuDb() throws Exception {
+    final File baseDir =
+            new File(
+                    "src/test/resources/tech/pegasys/leveldbjni/testdb");
+
+    byte[] genesisTimeKey = {-1,1};
+    byte[] expectedGenesisTimeValue = {0,0,0,0,0,0,0,0};
+
+    db = JniDBFactory.factory.open(baseDir, new Options().createIfMissing(false));
+
+    byte[] value = db.get(genesisTimeKey);
+
+    assertThat(value).isEqualTo(expectedGenesisTimeValue);
   }
 }
