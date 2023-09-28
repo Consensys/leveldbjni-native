@@ -7,7 +7,7 @@ orbs:
 executors:
   linux_executor:
     docker:
-      - image: eclipse-temurin:17.0.8.1_1-jdk
+      - image: eclipse-temurin:17.0.8.1_1-jdk-focal
         auth:
           username: $DOCKER_USER_RO
           password: $DOCKER_PASSWORD_RO
